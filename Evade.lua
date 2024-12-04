@@ -1310,7 +1310,7 @@ local Toggle = Tabs.Misc:AddToggle("AdjustBounce", {Title = "Bounce Toggle", Def
     Toggle:OnChanged(function(State)
         BounceToggle = State
      
-  while BounceToggle and wait(0.1) do
+  while BounceToggle and wait(0) do
   spawn(function()
     GetSpeedometer = game:GetService("Players").LocalPlayer.PlayerGui.Shared.HUD.Overlay.Default.CharacterInfo.Item.Speedometer.Players.Text
     local player = game.Players.LocalPlayer
@@ -1569,7 +1569,7 @@ Tabs.Misc:AddParagraph({
         Content = " "
     })
     
-local LagDelay = 0.1
+local LagDelay = 0
     
  local CAS = game:GetService("ContextActionService")
 local UserInputService = game:GetService("UserInputService")
@@ -1577,7 +1577,7 @@ local UserInputService = game:GetService("UserInputService")
  function CreateBindableButton()
     local function Action(actionName, inputState)
       if inputState == Enum.UserInputState.Begin then
-          setfflag("TaskSchedulerTargetFps", "1")
+          setfflag("TaskSchedulerTargetFps", "0")
       wait(LagDelay)
           setfflag("TaskSchedulerTargetFps", "900")
         end
@@ -1613,7 +1613,7 @@ end)
 local Slider = Tabs.Misc:AddSlider("LagDelay", {
         Title = "Lag Delay",
         Description = "",
-        Default = 0.1,
+        Default = 0,
         Min = 0,
         Max = 5,
         Rounding = 1,
