@@ -1569,7 +1569,7 @@ Tabs.Misc:AddParagraph({
         Content = " "
     })
     
-local LagDelay = 0
+local LagDelay = 0.1
     
  local CAS = game:GetService("ContextActionService")
 local UserInputService = game:GetService("UserInputService")
@@ -1577,7 +1577,7 @@ local UserInputService = game:GetService("UserInputService")
  function CreateBindableButton()
     local function Action(actionName, inputState)
       if inputState == Enum.UserInputState.Begin then
-          setfflag("TaskSchedulerTargetFps", "0")
+          setfflag("TaskSchedulerTargetFps", "1")
       wait(LagDelay)
           setfflag("TaskSchedulerTargetFps", "900")
         end
@@ -1613,7 +1613,7 @@ end)
 local Slider = Tabs.Misc:AddSlider("LagDelay", {
         Title = "Lag Delay",
         Description = "",
-        Default = 0,
+        Default = 0.1,
         Min = 0,
         Max = 5,
         Rounding = 1,
