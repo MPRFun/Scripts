@@ -95,51 +95,6 @@ end
 
 MakeDraggable(mainopen, mainopen) -- Making the button draggable
 
-local RunService = game:GetService("RunService")
-local fpsCounter = Instance.new("ScreenGui")
-fpsCounter.Parent = game.CoreGui
-fpsCounter.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-fpsCounter.ResetOnSpawn = false
-
-local label = Instance.new("TextLabel")
-label.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-label.BackgroundTransparency = 1.000
-label.TextColor3 = Color3.fromRGB(255, 255, 255)
-label.Font = Enum.Font.GothamBlack
-label.Size = UDim2.new(0, 150, 0, 70)
-label.Position = UDim2.new(0, 200, 0, 10)
-label.Text = "FPS: 0\nTime Played: 0h 0m 0s"
-label.TextSize = 10
-label.Parent = fpsCounter
-
-local startTime = tick()
-local lastUpdateTime = tick()
-local frameCount = 0
-
-RunService.RenderStepped:Connect(function()
-    local currentTime = tick()
-    local deltaTime = currentTime - lastUpdateTime
-    frameCount = frameCount + 1
-    
-    if frameCount == 1 and untilloaded == true then
-       game:GetService("Players").LocalPlayer:Kick("Device Saver: CRASH DETECTED")
-    end
-
-    if deltaTime >= 1 then
-        local fps = math.round(frameCount / deltaTime)
-        local elapsedTime = currentTime - startTime
-
-        local hours = math.floor(elapsedTime / 3600)
-        local minutes = math.floor((elapsedTime % 3600) / 60)
-        local seconds = math.floor(elapsedTime % 60)
-
-        label.Text = "FPS: " .. fps .. "\nClient Timer: " .. hours .. "h " .. minutes .. "m " .. seconds .. "s"
-
-        lastUpdateTime = currentTime
-        frameCount = 0
-    end
-end)
-
 if not require then
     return game:GetService("Players").LocalPlayer:Kick("UNC RESTRICTION MISSING: require(path) | PLEASE TRY OTHER EXECUTORS")
 else
