@@ -400,6 +400,64 @@ while ObjectiveESP and wait(0.4) do
  end)
 
 Tabs.Main:AddParagraph({
+        Title = "Lag Switch Features",
+        Content = " "
+    })
+    
+local LagDelay = 0.1
+    
+ local CAS = game:GetService("ContextActionService")
+local UserInputService = game:GetService("UserInputService")
+ 
+ function CreateBindableButton()
+    local function Action(actionName, inputState)
+      if inputState == Enum.UserInputState.Begin then
+          setfflag("TaskSchedulerTargetFps", "1")
+      wait(LagDelay)
+          setfflag("TaskSchedulerTargetFps", "900")
+        end
+    end
+
+    CAS:BindAction("ButtonTarget", Action, true, Enum.KeyCode.E)
+
+    local button1 = CAS:GetButton("ButtonTarget")
+    if button1 then 
+        CAS:SetPosition("ButtonTarget", UDim2.new(0, 0, 0.5, 0))
+        CAS:SetTitle("ButtonTarget", "Start Lag")
+        CAS:SetImage("ButtonTarget", "IMAGEHERE")  -- Replace "IMAGEHERE" with the actual image ID
+        button1.Size = UDim2.new(0.3, 0, 0.3, 0) -- Set size if button exists
+    end
+    
+    MakeDraggable(button1, button1)
+end
+
+function RemoveBindableButton()
+    CAS:UnbindAction("ButtonTarget")
+end
+
+local Toggle = Tabs.Misc:AddToggle("LagSwitch", {Title = "Lag Switch Toggle", Default = false})
+
+Toggle:OnChanged(function(State)
+    if State then
+        CreateBindableButton() -- Create buttons when toggled on
+    else
+        RemoveBindableButton() -- Remove buttons when toggled off
+    end
+end)
+
+local Slider = Tabs.Misc:AddSlider("LagDelay", {
+        Title = "Lag Delay",
+        Description = "",
+        Default = 0.1,
+        Min = 0,
+        Max = 5,
+        Rounding = 1,
+        Callback = function(v)
+            LagDelay = v
+        end
+    })
+
+Tabs.Main:AddParagraph({
         Title = "Game Mods Features",
         Content = " "
     })
@@ -1519,63 +1577,6 @@ Tabs.Misc:AddParagraph({
 
 end
 
-Tabs.Misc:AddParagraph({
-        Title = "Lag Switch Features",
-        Content = " "
-    })
-    
-local LagDelay = 0.1
-    
- local CAS = game:GetService("ContextActionService")
-local UserInputService = game:GetService("UserInputService")
- 
- function CreateBindableButton()
-    local function Action(actionName, inputState)
-      if inputState == Enum.UserInputState.Begin then
-          setfflag("TaskSchedulerTargetFps", "1")
-      wait(LagDelay)
-          setfflag("TaskSchedulerTargetFps", "900")
-        end
-    end
-
-    CAS:BindAction("ButtonTarget", Action, true, Enum.KeyCode.E)
-
-    local button1 = CAS:GetButton("ButtonTarget")
-    if button1 then 
-        CAS:SetPosition("ButtonTarget", UDim2.new(0, 0, 0.5, 0))
-        CAS:SetTitle("ButtonTarget", "Start Lag")
-        CAS:SetImage("ButtonTarget", "IMAGEHERE")  -- Replace "IMAGEHERE" with the actual image ID
-        button1.Size = UDim2.new(0.3, 0, 0.3, 0) -- Set size if button exists
-    end
-    
-    MakeDraggable(button1, button1)
-end
-
-function RemoveBindableButton()
-    CAS:UnbindAction("ButtonTarget")
-end
-
-local Toggle = Tabs.Misc:AddToggle("LagSwitch", {Title = "Lag Switch Toggle", Default = false})
-
-Toggle:OnChanged(function(State)
-    if State then
-        CreateBindableButton() -- Create buttons when toggled on
-    else
-        RemoveBindableButton() -- Remove buttons when toggled off
-    end
-end)
-
-local Slider = Tabs.Misc:AddSlider("LagDelay", {
-        Title = "Lag Delay",
-        Description = "",
-        Default = 0.1,
-        Min = 0,
-        Max = 5,
-        Rounding = 1,
-        Callback = function(v)
-            LagDelay = v
-        end
-    })
 
 Tabs.Misc:AddParagraph({
         Title = "BHOP Features",
