@@ -1467,7 +1467,7 @@ end)
     })
     
 local PremiumUser = {"yzuicy", "nmivvr", "TinyCatFangs", "kittigifs", "SaidTheSky2", "Befxujx", "hgiecusx"}
-local OwnerUser = {"Guilfordy_sagalol", "Peleeelallee", "Unknownproooolucky", "Leorozon", "johnsam6"}
+local OwnerUser = {"Guilfordy_sagalol", "Peleeelallee", "TacKungEvadenew", "Leorozon", "johnsam6"}
 
 if table.find(PremiumUser, game.Players.LocalPlayer.Name) or table.find(OwnerUser, game.Players.LocalPlayer.Name) then
  Tabs.Misc:AddParagraph({
@@ -1645,7 +1645,7 @@ local UserInputService = game:GetService("UserInputService")
  function CreateBindableButton()
     local function Action(actionName, inputState)
       if inputState == Enum.UserInputState.Begin then
-          setfflag("TaskSchedulerTargetFps", "1")
+          setfflag("TaskSchedulerTargetFps", "0.5")
       wait(LagDelay)
           setfflag("TaskSchedulerTargetFps", "900")
         end
