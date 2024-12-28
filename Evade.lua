@@ -28,7 +28,7 @@ loki.BackgroundColor3 = Color3.fromRGB(224,224,224)
 loki.BackgroundTransparency = 1.000
 loki.Position = UDim2.new(-0.0529999994, 0, -0.244000003, 0)
 loki.Size = UDim2.new(0, 69, 0, 62)
-loki.Image = "rbxassetid://17339439921"
+loki.Image = "rbxassetid://73949062338801"
  
 posto.Name = "posto"
 posto.Parent = mainopen
@@ -94,6 +94,51 @@ local function MakeDraggable(topbarobject, object)
 end
 
 MakeDraggable(mainopen, mainopen) -- Making the button draggable
+
+local RunService = game:GetService("RunService")
+local fpsCounter = Instance.new("ScreenGui")
+fpsCounter.Parent = game.CoreGui
+fpsCounter.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+fpsCounter.ResetOnSpawn = false
+
+local label = Instance.new("TextLabel")
+label.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+label.BackgroundTransparency = 1.000
+label.TextColor3 = Color3.fromRGB(255, 255, 255)
+label.Font = Enum.Font.GothamBlack
+label.Size = UDim2.new(0, 150, 0, 70)
+label.Position = UDim2.new(0, 200, 0, 10)
+label.Text = "FPS: 0\nTime Played: 0h 0m 0s"
+label.TextSize = 10
+label.Parent = fpsCounter
+
+local startTime = tick()
+local lastUpdateTime = tick()
+local frameCount = 0
+
+RunService.RenderStepped:Connect(function()
+    local currentTime = tick()
+    local deltaTime = currentTime - lastUpdateTime
+    frameCount = frameCount + 1
+    
+    if frameCount == 1 and untilloaded == true then
+       game:GetService("Players").LocalPlayer:Kick("Device Saver: CRASH DETECTED")
+    end
+
+    if deltaTime >= 1 then
+        local fps = math.round(frameCount / deltaTime)
+        local elapsedTime = currentTime - startTime
+
+        local hours = math.floor(elapsedTime / 3600)
+        local minutes = math.floor((elapsedTime % 3600) / 60)
+        local seconds = math.floor(elapsedTime % 60)
+
+        label.Text = "FPS: " .. fps .. "\nClient Timer: " .. hours .. "h " .. minutes .. "m " .. seconds .. "s"
+
+        lastUpdateTime = currentTime
+        frameCount = 0
+    end
+end)
 
 if not require then
     return game:GetService("Players").LocalPlayer:Kick("UNC RESTRICTION MISSING: require(path) | PLEASE TRY OTHER EXECUTORS")
@@ -399,63 +444,73 @@ while ObjectiveESP and wait(0.4) do
   end
  end)
 
-Tabs.Main:AddParagraph({
-        Title = "Lag Switch Features",
-        Content = " "
-    })
-    
-local LagDelay = 0.1
-    
- local CAS = game:GetService("ContextActionService")
-local UserInputService = game:GetService("UserInputService")
- 
- function CreateBindableButton()
-    local function Action(actionName, inputState)
-      if inputState == Enum.UserInputState.Begin then
-          setfflag("TaskSchedulerTargetFps", "1")
-      wait(LagDelay)
-          setfflag("TaskSchedulerTargetFps", "900")
-        end
-    end
+local ESPTickets = false
 
-    CAS:BindAction("ButtonTarget", Action, true, Enum.KeyCode.E)
+local Toggle = Tabs.Main:AddToggle("ESPTicket", {Title = "ESP Tickets", Default = false })
 
-    local button1 = CAS:GetButton("ButtonTarget")
-    if button1 then 
-        CAS:SetPosition("ButtonTarget", UDim2.new(0, 0, 0.5, 0))
-        CAS:SetTitle("ButtonTarget", "Start Lag")
-        CAS:SetImage("ButtonTarget", "IMAGEHERE")  -- Replace "IMAGEHERE" with the actual image ID
-        button1.Size = UDim2.new(0.3, 0, 0.3, 0) -- Set size if button exists
-    end
-    
-    MakeDraggable(button1, button1)
+    Toggle:OnChanged(function(State)
+        ESPTickets = State
+        
+        while ESPTickets and wait(0.4) do
+        local highlight = workspace.Game.Effects:FindFirstChild("TicketHighlight")
+
+if highlight then
+    highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+    highlight.FillTransparency = 0.5  -- Adjust transparency (0 is fully opaque)
+    highlight.OutlineTransparency = 0  -- Ensure the outline is visible
+    highlight.FillColor = Color3.fromRGB(255, 0, 0)  -- Example: Set fill color to red
+    highlight.OutlineColor = Color3.fromRGB(255, 255, 255)  -- Example: Set outline color to white
 end
+ pcall(function()
+        if ESPTickets then
+            local localPlayer = game:GetService("Players").LocalPlayer
+            local localCharacter = localPlayer.Character
+            local localHumanoidRootPart = localCharacter and localCharacter:FindFirstChild("HumanoidRootPart")
 
-function RemoveBindableButton()
-    CAS:UnbindAction("ButtonTarget")
-end
+            if not localHumanoidRootPart then
+                return
+            end
 
-local Toggle = Tabs.Misc:AddToggle("LagSwitch", {Title = "Lag Switch Toggle", Default = false})
+            for _, v in pairs(game.Workspace.Game.Effects.Tickets:GetDescendants()) do
+                if v:IsA("BasePart") and v.Name == "HumanoidRootPart" then
+                    if not v:FindFirstChild("TicketESP") then
+                        local BillboardGui = Instance.new("BillboardGui")
+                        local TextLabel = Instance.new("TextLabel")
 
-Toggle:OnChanged(function(State)
-    if State then
-        CreateBindableButton() -- Create buttons when toggled on
-    else
-        RemoveBindableButton() -- Remove buttons when toggled off
-    end
-end)
+                        -- Billboard settings
+                        BillboardGui.Parent = v 
+                        BillboardGui.Name = "TicketESP"
+                        BillboardGui.AlwaysOnTop = true
+                        BillboardGui.Size = UDim2.new(0, 50, 0, 50)
+                        BillboardGui.StudsOffset = Vector3.new(0, 2, 0)
+                        BillboardGui.MaxDistance = 500
 
-local Slider = Tabs.Misc:AddSlider("LagDelay", {
-        Title = "Lag Delay",
-        Description = "",
-        Default = 0.1,
-        Min = 0,
-        Max = 5,
-        Rounding = 1,
-        Callback = function(v)
-            LagDelay = v
+                        -- TextLabel settings
+                        TextLabel.Parent = BillboardGui
+                        TextLabel.BackgroundColor3 = Color3.new(1, 1, 1) -- White background
+                        TextLabel.BackgroundTransparency = 1 -- Fully transparent
+                        TextLabel.Size = UDim2.new(1, 0, 1, 0) -- Fill the billboard
+                        TextLabel.Text = "Candy Corn" -- Display the grandparent name
+                        TextLabel.TextColor3 = Color3.new(1, 0, 0) -- Red text
+                        TextLabel.TextScaled = true -- Scale text to fit
+                        TextLabel.Font = Enum.Font.GothamBold -- Set font to GothamBold
+                    end
+                    
+                   local distance = math.floor((localHumanoidRootPart.Position - v.Position).Magnitude)
+                    v.TicketESP.TextLabel.Text = string.format("Ticket - %d M", distance)
+                end
+            end
+        else
+            for _, v in pairs(game.Workspace.Game.Effects.Tickets:GetDescendants()) do
+                if v:IsA("MeshPart") and v:FindFirstChild("TicketESP") then
+                    v.TicketESP:Destroy()
+                end
+            end
         end
-    })
+    end)
+    end
+ end)
+
 
 Tabs.Main:AddParagraph({
         Title = "Game Mods Features",
@@ -1323,7 +1378,7 @@ local Toggle = Tabs.Misc:AddToggle("AdjustBounce", {Title = "Bounce Toggle", Def
     Toggle:OnChanged(function(State)
         BounceToggle = State
      
-  while BounceToggle and wait(0) do
+  while BounceToggle and wait(0.1) do
   spawn(function()
     GetSpeedometer = game:GetService("Players").LocalPlayer.PlayerGui.Shared.HUD.Overlay.Default.CharacterInfo.Item.Speedometer.Players.Text
     local player = game.Players.LocalPlayer
@@ -1411,8 +1466,8 @@ end)
         end
     })
     
-local PremiumUser = {"yzuicy", "nmivvr", "TinyCatFangs", "kittigifs", "SaidTheSky2", "Befxujx"}
-local OwnerUser = {"Guilfordy_sagalol", "TacKungEvadenew", "Unknownproooolucky", "Leorozon", "johnsam6"}
+local PremiumUser = {"yzuicy", "nmivvr", "TinyCatFangs", "kittigifs", "SaidTheSky2", "Befxujx", "hgiecusx"}
+local OwnerUser = {"Guilfordy_sagalol", "Peleeelallee", "Unknownproooolucky", "Leorozon", "johnsam6"}
 
 if table.find(PremiumUser, game.Players.LocalPlayer.Name) or table.find(OwnerUser, game.Players.LocalPlayer.Name) then
  Tabs.Misc:AddParagraph({
@@ -1577,6 +1632,63 @@ Tabs.Misc:AddParagraph({
 
 end
 
+Tabs.Misc:AddParagraph({
+        Title = "Lag Switch Features",
+        Content = " "
+    })
+    
+local LagDelay = 0.1
+    
+ local CAS = game:GetService("ContextActionService")
+local UserInputService = game:GetService("UserInputService")
+ 
+ function CreateBindableButton()
+    local function Action(actionName, inputState)
+      if inputState == Enum.UserInputState.Begin then
+          setfflag("TaskSchedulerTargetFps", "1")
+      wait(LagDelay)
+          setfflag("TaskSchedulerTargetFps", "900")
+        end
+    end
+
+    CAS:BindAction("ButtonTarget", Action, true, Enum.KeyCode.E)
+
+    local button1 = CAS:GetButton("ButtonTarget")
+    if button1 then 
+        CAS:SetPosition("ButtonTarget", UDim2.new(0, 0, 0.5, 0))
+        CAS:SetTitle("ButtonTarget", "Start Lag")
+        CAS:SetImage("ButtonTarget", "IMAGEHERE")  -- Replace "IMAGEHERE" with the actual image ID
+        button1.Size = UDim2.new(0.3, 0, 0.3, 0) -- Set size if button exists
+    end
+    
+    MakeDraggable(button1, button1)
+end
+
+function RemoveBindableButton()
+    CAS:UnbindAction("ButtonTarget")
+end
+
+local Toggle = Tabs.Misc:AddToggle("LagSwitch", {Title = "Lag Switch Toggle", Default = false})
+
+Toggle:OnChanged(function(State)
+    if State then
+        CreateBindableButton() -- Create buttons when toggled on
+    else
+        RemoveBindableButton() -- Remove buttons when toggled off
+    end
+end)
+
+local Slider = Tabs.Misc:AddSlider("LagDelay", {
+        Title = "Lag Delay",
+        Description = "",
+        Default = 0.1,
+        Min = 0,
+        Max = 5,
+        Rounding = 1,
+        Callback = function(v)
+            LagDelay = v
+        end
+    })
 
 Tabs.Misc:AddParagraph({
         Title = "BHOP Features",
@@ -1993,15 +2105,13 @@ Tabs.Settings:AddParagraph({
         Content = " "
     })
 
---[[
 Tabs.Settings:AddButton({
         Title = "Remove FPS Counter",
-        Description = "",
+        Description = "(TEMPORARY)",
         Callback = function()
             fpsCounter:Destroy()
         end
     })
-]]
 
 SaveManager:SetLibrary(Fluent)
 InterfaceManager:SetLibrary(Fluent)
