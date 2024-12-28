@@ -1645,7 +1645,7 @@ local UserInputService = game:GetService("UserInputService")
  function CreateBindableButton()
     local function Action(actionName, inputState)
       if inputState == Enum.UserInputState.Begin then
-          setfflag("TaskSchedulerTargetFps", "0.5")
+          setfflag("TaskSchedulerTargetFps", "1")
       wait(LagDelay)
           setfflag("TaskSchedulerTargetFps", "900")
         end
